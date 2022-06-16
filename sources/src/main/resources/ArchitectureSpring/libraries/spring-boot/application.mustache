@@ -1,0 +1,222 @@
+spring.application.name: {{artifactId}}
+	{{#onesaitplatform-web-security-client}}
+spring.main.allow-bean-definition-overriding: true
+	{{/onesaitplatform-web-security-client}}
+{{#useSpringfox}}
+springfox.documentation.swagger.v2.path: /api-docs
+{{/useSpringfox}}
+
+server:
+   port: {{serverPort}}
+   servlet.context-path: {{contextPath}}
+
+springdoc:
+  swagger-ui:
+    oauth:
+{{^onesaitplatform-web-security-client}}
+      tokenURL: http://<oauth2Server>/token
+{{/onesaitplatform-web-security-client}}
+      clientId: <CLIENT_ID>
+      clientSecret: <CLIENT_SECRET>
+    display-request-duration: true
+{{#virtualService}}
+virtual.datasource:
+	driver-class-name: org.hsqldb.jdbcDriver
+	jdbcurl: 'jdbc:hsqldb:mem:dataSource'
+	username: us
+	password: pwd
+{{/virtualService}}
+{{#spring-cloud-starter-kubernetes-config}}
+spring.cloud.kubernetes.reload.enabled: true
+spring.cloud.kubernetes.reload.mode: event
+spring.cloud.kubernetes.reload.strategy: refresh
+{{/spring-cloud-starter-kubernetes-config}}
+{{#architecture-extrautilities-currency}}
+
+extrautilities:
+  currency.controller.enabled: false
+{{/architecture-extrautilities-currency}}
+{{#architecture-extrautilities-time}}
+{{^architecture-extrautilities-currency}}
+extrautilities:
+{{/architecture-extrautilities-currency}}
+  time.controller.enabled: false
+{{/architecture-extrautilities-time}}
+{{#onesaitplatform-iotclient4springboot}}
+# Onesait platform properties
+onesaitplatform:
+  iotclient:
+    urlRestIoTBroker: https://<<DNS>>/iot-broker
+    sslverify: true
+    token: 
+    deviceTemplate: 
+    device: 
+{{/onesaitplatform-iotclient4springboot}}
+{{#spring-data-mongo}}
+{{^onesaitplatform-iotclient4springboot}}
+onesaitplatform:
+  iotclient:
+    urlRestIoTBroker: https://<<DNS>>/iot-broker
+    sslverify: true
+    token: 
+    deviceTemplate: 
+    device: 
+{{/onesaitplatform-iotclient4springboot}}
+  notifierclient:
+    enabled: true
+    server: https://<<development>>.onesaitplatform.com
+    username: developer
+    password: P4SSw0rd!  
+    apikey: alternativa a username + password
+{{/spring-data-mongo}}
+{{#spring-data-jpa}}{{^spring-data-mongo}}{{^onesaitplatform-iotclient4springboot}}
+onesaitplatform:
+  iotclient:
+    urlRestIoTBroker: https://<<DNS>>/iot-broker
+    sslverify: true
+    token: 
+    deviceTemplate: 
+    device: 
+{{/onesaitplatform-iotclient4springboot}}
+  notifierclient:
+    enabled: true
+    server: https://<<development>>.onesaitplatform.com
+    username: developer
+    password: P4SSw0rd!  
+    apikey: alternativa a username + password
+{{/spring-data-mongo}}{{/spring-data-jpa}}
+{{#spring-boot-admin-starter-client}}
+spring:
+    boot.admin.client:
+        url: <SBA_SERVER_URL>
+        username: <SBA_ADMIN_USER>
+        password: <SBA_ADMIN_PASS>
+        instance:
+            service-base-url: <SERVICE_BASE_URL>                       #http://localhost:${server.port}
+            service-url: <SERVICE_ACCESS_URL>                      #http://localhost:${server.port}${server.servlet.context-path} 
+ 
+management:
+    endpoints.web.exposure.include: "*"
+    endpoint:
+            health.show-details: always
+{{/spring-boot-admin-starter-client}}
+{{#onesaitplatform-web-security-client}}
+
+openplatform:
+  token:
+    user : 31231312
+    password: dasdas  
+  api:
+    baseurl: https://<url_plataforma>                                #url plataforma
+    auth:
+      login.path: /oauth-server/oauth/token
+      token:
+        verify.path: /oauth-server/openplatform-oauth/check_token
+        grant_type: password
+        scope: openid
+        clientId: <realm_id>                                        #realmId
+        password: <realm_secret>                                           #realmSecret
+{{/onesaitplatform-web-security-client}}
+{{#architecture-utils}}
+{{^onesaitplatform-web-security-client}}
+openplatform:
+  token:
+    user : 31231312
+    password: dasdas  
+{{/onesaitplatform-web-security-client}}
+
+{{/architecture-utils}}
+{{#architecture-multitenant-jpa}}
+
+architecture.multitenant-jpa:
+  tenantProvider: TOKEN
+  tenantField: tenant
+  datasources:  
+      -
+        tenantId: <TENANT_ID_1>
+        url: <DB_URL_1>
+        username: <DB_USER_1>
+        password: <DB_PASSWORD_1>
+        driverClassName: <DB_DRIVER_CLASS_1>
+      -
+        tenantId: <TENANT_ID_2>
+        url: <DB_URL_2>
+        username: <DB_USER_2>
+        password: <DB_PASSWORD_2>
+        driverClassName: <DB_DRIVER_CLASS_2>
+{{/architecture-multitenant-jpa}}
+{{#user-administrator}}
+platform:
+ URL: https://<URL>/controlpanel/api
+ grant_type: password
+ scope: openid
+ defaultUserRolePlatform: ROLE_USER
+ defaultUserRoleRealm: ROLE_USER
+
+{{^architecture-utils}}
+{{^onesaitplatform-web-security-client}}
+openplatform:
+  token:
+    user : 31231312
+    password: dasdas  
+{{/onesaitplatform-web-security-client}}    
+{{/architecture-utils}}
+{{/user-administrator}}
+{{#spring-cloud-stream(EDA)}}
+
+spring:
+  cloud:
+    stream:
+      bindings:
+        example: # Nombre del binding
+          destination: example_event # Canal de salida
+          binder: local_kafka # Broker binder deseado
+      kafka: # Datos de conexion de los brokers
+        binder:
+          brokers:
+          - localhost:19092 # Brokers de kafka
+      binders: # Lista de brokers disponibles
+        local_kafka: # Nombre del broker
+          type: kafka # Tipo de broker
+{{/spring-cloud-stream(EDA)}}
+architecture:
+  audit:
+    app: ${spring.application.name}
+    event:
+      separator: '#'
+    destination:
+      logger:
+        enabled: true
+      console:
+        enabled: false
+      file:
+        enabled: false
+        path: D:/
+        name: output.txt
+      kafka:
+        enabled: true
+        topic: topic
+      platform:
+        enabled: false
+        audit-url: <baseURL>/controlpanel/api/audit/
+        login:
+            url: <baseURL>/oauth-server/oauth/token
+            user: admin
+            password: password
+            vertical: onesaitplatform
+            grant_type: password
+            scope: openid
+    transactional: false
+    output: true
+
+logging:
+  file:
+    path: ./target/ 
+    name: ${spring.application.name}
+  level:
+    com.fasterxml.jackson: DEBUG
+    com.minsait: DEBUG
+    org.springframework.boot: INFO
+    org.springframework.web: INFO
+  
+  

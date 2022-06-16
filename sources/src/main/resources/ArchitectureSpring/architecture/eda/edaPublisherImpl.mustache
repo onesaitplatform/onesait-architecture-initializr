@@ -1,0 +1,28 @@
+
+package {{basePackage}}.eda.publishers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.stereotype.Component;
+
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Component
+@EnableBinding(ExampleChannel.class)
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+class ExamplePublisherImpl implements ExamplePublisher {
+
+	private final ExampleChannel channel;
+
+	@Override
+	public void send(String notification) {
+		log.debug("Sending message: {}", notification);
+		channel.output().send(MessageBuilder.withPayload(notification).setHeader("operation", "new").build());
+		log.debug("Message send successfully");
+	}
+
+}

@@ -1,0 +1,67 @@
+package {{configPackage}};
+
+import java.util.Arrays;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.OAuthFlow;
+import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.security.SecurityScheme.Type;
+import io.swagger.v3.oas.models.servers.Server;
+
+{{>generatedAnnotation}}
+@Configuration
+public class OpenAPIDocumentationConfig {
+
+    @Value("${server.servlet.context-path}")
+	private String contextPath;
+	{{#onesaitplatform-web-security-client}}
+    @Value("${openplatform.api.baseurl}"+ "${openplatform.api.auth.login.path}")
+	private String tokenUrl;
+	{{/onesaitplatform-web-security-client}}
+	{{^onesaitplatform-web-security-client}}
+    @Value("${springdoc.swagger-ui.oauth.tokenURL}")
+	private String tokenUrl;
+	{{/onesaitplatform-web-security-client}}
+	
+    @Autowired
+    private BuildProperties buildProperties;
+    
+    private static final String OAUTH = "OAUTH2";
+    private static final String BEARER = "TOKEN";
+    
+    @Bean
+	public OpenAPI customOpenAPI() {
+		// define the apiKey SecuritySchema
+		return new OpenAPI()
+				.components(new Components().addSecuritySchemes(OAUTH, flow()).addSecuritySchemes(BEARER,
+						apiKeySecuritySchema()))
+				{{=<% %>=}}
+				.info(new Info().version(buildProperties.getVersion()).title("<%title%> API")
+				<%={{ }}=%>
+						.description("RESTful services documentation with OpenAPI 3."))
+				.security(Arrays.asList(new SecurityRequirement().addList(OAUTH),
+						new SecurityRequirement().addList(BEARER)))
+				.addServersItem(new Server().url(contextPath));
+	}
+	
+	public SecurityScheme apiKeySecuritySchema() {
+		return new SecurityScheme().name("Authorization").description("Description about the TOKEN").type(Type.HTTP)
+				.bearerFormat("JWT").scheme("bearer");
+	}
+	
+	private SecurityScheme flow() {
+		return new SecurityScheme().type(Type.OAUTH2)
+				.flows(new OAuthFlows().password(new OAuthFlow().tokenUrl(tokenUrl)));
+	}
+
+}

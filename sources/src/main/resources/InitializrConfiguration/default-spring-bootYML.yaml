@@ -1,0 +1,73 @@
+openapi: 3.0.1
+info:
+  title: defProject
+  description: RESTful services documentation with OpenAPI 3.
+  version: 0.0.1-SNAPSHOT
+servers:
+- url: /api
+
+paths:
+  /helloWorldController/helloWorld:
+    get:
+      tags:
+      - Hello World Rest Controller
+      summary: Say hello world
+      description: Return Hello World
+      operationId: getHelloWorld
+      responses:
+        "500":
+          description: Unexpected exception (Internal Server Error)
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseErrorList"
+        "401":
+          description: Unauthorized request.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseErrorList"
+        "404":
+          description: Resource not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseErrorList"
+        "400":
+          description: "Bad request, review the request param"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseErrorList"
+        "200":
+          description: "Request Successful, review the resulting object. If infoError\
+            \ is not null, then a functional error has occurred in the back-end "
+          content:
+            '*/*':
+              schema:
+                type: object
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                type: object
+components:
+  schemas:
+    ResponseError:
+      type: object
+      properties:
+        type:
+          type: string
+        alias:
+          type: string
+        description:
+          type: string
+    ResponseErrorList:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResponseError"
+

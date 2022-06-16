@@ -1,0 +1,39 @@
+server:
+   port: 8080
+   servlet.context-path: /initializr/v2
+      
+spring.application.name: intializrV2
+
+initializr:
+  security.key: ${SECURITY_KEY}
+architecture:
+  audit:
+    app: onesait-initializrv2
+    event:
+      separator: '#'
+    destination:
+      logger:
+        enabled: ${AUDIT_LOGGER_ENABLE:false}
+      console:
+        enabled: ${AUDIT_CONSOLE_ENABLE:false}
+      file:
+        path: ${AUDIT_FILE_PATH:a}
+        name: ${AUDIT_FILE_NAME:a}
+        enabled: ${AUDIT_FILE_ENABLE:false}
+      platform:
+        enabled: ${AUDIT_OP_ENABLE:false}
+        endpoint: ${AUDIT_OP_ENDPOINT:a}
+      customElastic:
+        enabled: ${AUDIT_CUSTOM_ELASTIC_ENABLED:false}
+        elasticServer: ${AUDIT_CUSTOM_ELASTIC_HOST:a}
+        userBlackList: ${AUDIT_CUSTOM_ELASTIC_BLACKLIST:a}
+    transactional: ${AUDIT_TRANSACTIONAL:true}
+    output: ${AUDIT_OUTPUT:false}
+  
+management.endpoints.web.exposure.include: "*"
+management.endpoint:
+            health.show-details: always
+            logfile.external-file: ${logging.file.path}/${spring.application.name}
+
+logging:
+  file.path: /var/log/app-logs

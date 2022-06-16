@@ -1,0 +1,38 @@
+package {{basePackage}}.archunit;
+
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.tngtech.archunit.core.domain.JavaClasses;
+import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.lang.ArchRule;
+
+public class AnnotationsTest {
+
+	private JavaClasses javaClasses;
+
+	@BeforeEach
+	public void init() {
+		this.javaClasses = new ClassFileImporter().importPackages("{{basePackage}}");
+	}
+
+	@Test
+	public void givenControllers_thenClassesAreAnnotatedWithRestController() {
+		ArchRule controllerRule = classes().that().resideInAPackage("..controller..").should()
+				.beAnnotatedWith(RestController.class);
+
+		controllerRule.check(this.javaClasses);
+	}
+
+	@Test
+	public void givenServices_thenClassesAreAnnotatedWithService() {
+		ArchRule serviceRule = classes().that().resideInAPackage("..services.impl").should()
+				.beAnnotatedWith(Service.class);
+
+		serviceRule.check(this.javaClasses);
+	}
+}

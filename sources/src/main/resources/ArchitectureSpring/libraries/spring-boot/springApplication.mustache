@@ -1,0 +1,27 @@
+package {{basePackage}};
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+    {{^useSpringfox}}
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+    {{/useSpringfox}}
+
+@SpringBootApplication
+@ComponentScan(basePackages = {"{{basePackage}}", "{{apiPackage}}" , "{{configPackage}}","com.minsait","com.minsait.onesait.architecture"})
+public class Application {
+
+    public static void main(String[] args) throws Exception {
+        new SpringApplication(Application.class).run(args);
+    }
+
+
+{{^useSpringfox}}
+
+            @Override
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                registry.addResourceHandler("/swagger-ui/**").addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/3.14.2/");
+            }
+{{/useSpringfox}}
+
+}

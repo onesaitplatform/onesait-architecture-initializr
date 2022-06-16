@@ -1,0 +1,19 @@
+{{#useSpringfox}}
+springfox.documentation.swagger.v2.path: /api-docs
+{{/useSpringfox}}
+
+server:
+   port: {{serverPort}}
+   servlet.context-path: {{contextPath}}
+
+{{#virtualService}}
+virtual.datasource:
+	driver-class-name: org.hsqldb.jdbcDriver
+	jdbcurl: 'jdbc:hsqldb:mem:dataSource'
+	username: us
+	password: pwd
+{{/virtualService}}
+  
+logging:
+  file:
+    path: /var/log/app-logs

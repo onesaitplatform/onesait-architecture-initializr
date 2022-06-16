@@ -1,0 +1,262 @@
+{
+	"optionals": [
+		{
+			"name": "spring-boot-admin-starter-client",
+			"description": "Dependencia para la monitorizacion mediante Spring Boot Admin(Requiere configuracion)",
+			"url": "#",
+			"defaultValue": false
+		},
+		{
+			"name": "architecture-utils",
+			"description": "Dependencia que engloba una serie de funcionalidades que podran ser utiles a lo largo del desarrollo de microservicios",
+			"url": "https://github.com/onesaitplatform/onesait-architecture-utils",
+			"defaultValue": false
+		},
+		{
+			"name": "onesaitplatform-web-security-client",
+			"description": "Dependencia de seguridad delegada en la OP",
+			"url": "https://onesaitplatform.atlassian.net/wiki/spaces/OP/pages/180682753/Security+integrated+in+Web+Spring+Boot+applications",
+			"defaultValue": false
+		},
+		{
+			"name": "spring-data-mongo",
+			"description": "Dependencia de notificaciones a plataforma usando Spring Data Mongo",
+			"url": "https://onesaitplatform.atlassian.net/wiki/spaces/OP/pages/652574948/Client+APIs+API+Java+para+trabajar+de+forma+transparente+con+ontolog+as",
+			"defaultValue": false
+		},
+		{
+			"name": "spring-data-jpa",
+			"description": "Dependencia de notificaciones a plataforma usando Spring Data JPA",
+			"url": "https://onesaitplatform.atlassian.net/wiki/spaces/OP/pages/652574948/Client+APIs+API+Java+para+trabajar+de+forma+transparente+con+ontolog+as",
+			"defaultValue": false
+		},
+		{
+			"name": "onesaitplatform-iotclient4springboot",
+			"description": "Librería Java preparada para funcionar sobre Spring Boot y que simplifica el acceso al DigitalBroker de la Onesait Platform",
+			"url": "https://onesaitplatform.atlassian.net/wiki/spaces/OP/pages/52625414/Client+APIS+What+is+the+Spring+client+librery+aka+Client4SpringBoot+and+how+to+use+it",
+			"defaultValue": false
+		},
+		{
+			"name": "logback-fluentd",
+			"description": "Dependencias y configuracion para enviar logs a fluentd",
+			"url": "#",
+			"defaultValue": false
+		},
+		{
+			"name": "spring-cloud-starter-config",
+			"description": "Dependencia y configuracion para un cliente que recoge su configuracion de un servidor de Spring Cloud Config",
+			"url": "#",
+			"defaultValue": false,
+			"files": [
+				{
+					"mustache": "bootstrap.mustache",
+					"dest": "",
+					"type": "RESOURCE",
+					"name": "bootstrap.properties",
+					"scopes": [
+						"lib-spring-boot",
+						"spring-boot"
+					]
+				}
+			]
+		},
+		{
+			"name": "spring-cloud-starter-kubernetes-config",
+			"description": "Dependencia y configuracion para un cliente que recoge su configuracion de ficheros de configuracion de Kubernetes",
+			"url": "#",
+			"defaultValue": false,
+			"files": [
+				{
+					"mustache": "clientConfig.mustache",
+					"dest": "configuration",
+					"type": "CLASS",
+					"name": "ClientConfig.java",
+					"scopes": [
+						"lib-spring-boot",
+						"spring-boot"
+					]
+				}
+			]
+		},
+		{
+			"name": "architecture-multitenant-jpa",
+			"description": "Dependencia y configuracion para hacer uso de JPA en un servicio multitenant",
+			"url": "https://github.com/onesaitplatform/onesait-architecture-multitenant-jpa",
+			"defaultValue": false
+		},
+		{
+			"name": "spring-boot-starter-jetty",
+			"description": "Usar el servlet Jetty en lugar de Tomcat",
+			"url": "#",
+			"defaultValue": false
+		},
+		{
+			"name": "spring-boot-starter-undertow",
+			"description": "Usar el servlet Undertow en lugar de Tomcat",
+			"url": "#",
+			"defaultValue": false
+		},
+		{
+			"name": "spring-cloud-stream(EDA)",
+			"description": "Dependenciaa, configuracion y clases necesarias para crear un microservicio siguiendo una arquitectura dirigida por eventos",
+			"url": "#",
+			"defaultValue": false,
+			"files": [
+				{
+					"mustache": "eda/edaChannel.mustache",
+					"dest": "eda/publishers",
+					"type": "CLASS",
+					"name": "ExampleChannel.java",
+					"scopes": [
+						"lib-spring-boot",
+						"spring-boot"
+					]
+				},
+				{
+					"mustache": "eda/edaPublisher.mustache",
+					"dest": "eda/publishers",
+					"type": "CLASS",
+					"name": "ExamplePublisher.java",
+					"scopes": [
+						"lib-spring-boot",
+						"spring-boot"
+					]
+				},
+				{
+					"mustache": "eda/edaPublisherImpl.mustache",
+					"dest": "eda/publishers",
+					"type": "CLASS",
+					"name": "ExamplePublisherImpl.java",
+					"scopes": [
+						"lib-spring-boot",
+						"spring-boot"
+					]
+				},
+				{
+					"mustache": "eda/edaExampleBinding.mustache",
+					"dest": "eda/subscribers",
+					"type": "CLASS",
+					"name": "ExampleInputBinding.java",
+					"scopes": [
+						"lib-spring-boot",
+						"spring-boot"
+					]
+				},
+				{
+					"mustache": "eda/edaExampleSubscriber.mustache",
+					"dest": "eda/subscribers",
+					"type": "CLASS",
+					"name": "ExampleSubscriber.java",
+					"scopes": [
+						"lib-spring-boot",
+						"spring-boot"
+					]
+				}
+			]
+		}
+	],
+	"defaults": [
+		{
+			"mustache": "gitignore.mustache",
+			"dest": "",
+			"type": "FILE",
+			"name": ".gitignore",
+			"scopes": [
+				"lib-spring-boot",
+				"spring-boot"
+			]
+		},
+		{
+			"mustache": "dockerfile.mustache",
+			"dest": "docker",
+			"type": "FILE",
+			"name": "Dockerfile",
+			"scopes": [
+				"spring-boot"
+			]
+		},
+		{
+			"mustache": "securityConfig.mustache",
+			"dest": "configuration",
+			"type": "CLASS",
+			"name": "SecurityConfigAuthorization.java",
+			"scopes": [
+				"spring-boot"
+			]
+		},
+		{
+			"mustache": "logback.mustache",
+			"dest": "",
+			"type": "RESOURCE",
+			"name": "logback-spring.xml",
+			"scopes": [
+				"spring-boot"
+			]
+		},
+		{
+			"mustache": "exampleService.mustache",
+			"dest": "services",
+			"type": "CLASS",
+			"name": "ExampleService.java",
+			"scopes": [
+				"lib-spring-boot"
+			]
+		},
+		{
+			"mustache": "exampleServiceImpl.mustache",
+			"dest": "services/impl",
+			"type": "CLASS",
+			"name": "ExampleServiceImpl.java",
+			"scopes": [
+				"lib-spring-boot"
+			]
+		},
+		{
+			"mustache": "archunitProperties.mustache",
+			"dest": "src/test/resources",
+			"type": "FILE",
+			"name": "archunit.properties",
+			"scopes": [
+				"spring-boot"
+			]
+		}
+	],
+	"tests": [
+		{
+			"mustache": "AnnotationsTest.mustache",
+			"dest": "archunit",
+			"type": "TEST",
+			"name": "AnnotationsTest.java",
+			"scopes": [
+				"spring-boot"
+			]
+		},
+		{
+			"mustache": "ClassesTest.mustache",
+			"dest": "archunit",
+			"type": "TEST",
+			"name": "ClassesTest.java",
+			"scopes": [
+				"spring-boot"
+			]
+		},
+		{
+			"mustache": "CodingRulesTest.mustache",
+			"dest": "archunit",
+			"type": "TEST",
+			"name": "CodingRulesTest.java",
+			"scopes": [
+				"spring-boot"
+			]
+		},
+		{
+			"mustache": "LayerTest.mustache",
+			"dest": "archunit",
+			"type": "TEST",
+			"name": "LayerTest.java",
+			"scopes": [
+				"spring-boot"
+			]
+		}
+	]
+}

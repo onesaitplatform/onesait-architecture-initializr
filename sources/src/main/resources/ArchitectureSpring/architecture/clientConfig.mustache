@@ -1,0 +1,22 @@
+{{#spring-cloud-starter-kubernetes-config}}
+package {{configPackage}};
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ConfigurationProperties(prefix = "example")
+public class ClientConfig {
+ 
+    private String message = "Message from backend is: %s <br/> Services : %s";
+ 
+    // getters and setters
+    public String getMessage() {
+    	return message;
+    }
+    
+    public void setMessage(String message) {
+    	this.message = message;
+    }
+}
+{{/spring-cloud-starter-kubernetes-config}}

@@ -1,0 +1,19 @@
+openapi: 3.0.1
+info:
+  title: defProject
+  description: RESTful services documentation with OpenAPI 3.
+  version: 0.0.1-SNAPSHOT
+servers:
+- url: /api
+
+paths:
+  /helloWorldController/helloWorld:
+    get:
+      tags:
+      - Hello World Rest Controller
+      summary: Say hello world
+      description: Return Hello World
+      operationId: getHelloWorld
+      responses:
+        "200":
+          description: ""

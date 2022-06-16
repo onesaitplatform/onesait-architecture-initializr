@@ -1,0 +1,58 @@
+package {{package}};
+
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.HttpServerErrorException;
+import java.util.Optional;
+{{>generatedAnnotation}}
+@Controller
+{{=<% %>=}}
+@RequestMapping("${openapi.<%title%>.base-path:<%>defaultBasePath%>}")
+<%={{ }}=%>
+{{#operations}}
+public class {{classname}}Controller implements {{classname}} {
+
+{{#operation}}
+    /**
+     * {{httpMethod}} {{{path}}}{{#summary}} : {{.}}{{/summary}}
+    {{#notes}}
+     * {{.}}
+    {{/notes}}
+     *
+    {{#allParams}}
+     * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{.}}{{/defaultValue}}){{/required}}
+    {{/allParams}}
+     * @return {{#responses}}{{message}} (status code {{code}}){{#hasMore}}
+     *         or {{/hasMore}}{{/responses}}
+    {{#isDeprecated}}
+     * @deprecated
+    {{/isDeprecated}}
+    {{#externalDocs}}
+     * {{description}}
+     * @see <a href="{{url}}">{{summary}} Documentation</a>
+    {{/externalDocs}}
+     * @see {{classname}}#{{operationId}}
+     */
+    @Override
+    public {{#responseWrapper}}{{.}}<{{/responseWrapper}}{{>returnTypes}}{{#responseWrapper}}>{{/responseWrapper}} {{operationId}}({{#allParams}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{>cookieParams}}{{#hasMore}},{{/hasMore}}{{/allParams}}) {
+    {{^isDelegate}}
+        {{^async}}
+        {{>methodBody}}
+        {{/async}}
+        {{#async}}
+        return new Callable<ResponseEntity<{{>returnTypes}}>>() {
+            @Override
+            public ResponseEntity<{{>returnTypes}}> call() {
+                {{>methodBody}}
+            }
+        };
+        {{/async}}
+    {{/isDelegate}}
+    }
+
+{{/operation}}
+}
+{{/operations}}

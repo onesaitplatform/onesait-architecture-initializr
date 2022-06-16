@@ -1,0 +1,12 @@
+package {{basePackage}}.eda.publishers;
+
+import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.messaging.MessageChannel;
+
+public interface ExampleChannel {
+
+	String OUTPUT_STRING = "example";
+	
+	@Output(ExampleChannel.OUTPUT_STRING)
+	MessageChannel output();
+}

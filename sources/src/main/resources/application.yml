@@ -1,0 +1,67 @@
+server:
+   port: 8080
+   servlet.context-path: /initializr/v2
+      
+spring.application.name: intializrV2
+
+springdoc:
+  swagger-ui:
+    oauth:
+      tokenUrl: a
+      clientId: a
+      clientSecret: a
+    display-request-duration: true
+    
+initializr:
+  security.key: ExampleSecurityKey
+
+architecture:
+  audit:
+    app: ${spring.application.name}
+    event:
+      separator: '#'
+    destination:
+      logger:
+        enabled: true
+      console:
+        enabled: false
+      file:
+        enabled: false
+        path: D:/
+        name: output.txt
+      kafka:
+        enabled: false
+        topic: topic
+      customElastic:
+        enabled: false
+        elasticServer: 'http://localhost:9200'
+        userBlackList: a
+      platform:
+        enabled: false
+        audit-url: ${baseURL}/controlpanel/api/audit/
+        login:
+            url: ${baseURL}/oauth-server/oauth/token
+            user: admin
+            password: password
+            vertical: onesaitplatform
+            grant_type: password
+            scope: openid
+      
+    transactional: true
+    output: true
+  
+management:
+  endpoints.web.exposure.include: "*"
+  endpoint:
+    health.show-details: always
+    logfile.external-file: ./target/${spring.application.name}
+
+logging:
+  file:
+    path: ./target/ 
+    name: ${spring.application.name}
+  level:
+    com.fasterxml.jackson: DEBUG
+    com.minsait: DEBUG
+    org.springframework.boot: INFO
+    org.springframework.web: INFO

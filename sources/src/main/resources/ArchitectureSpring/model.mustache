@@ -1,0 +1,29 @@
+package {{package}};
+
+import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+{{#imports}}import {{import}};
+{{/imports}}
+{{#serializableModel}}
+import java.io.Serializable;
+{{/serializableModel}}
+{{#useBeanValidation}}
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+{{/useBeanValidation}}
+{{#performBeanValidation}}
+import org.hibernate.validator.constraints.*;
+{{/performBeanValidation}}
+{{#jackson}}
+{{/jackson}}
+{{#models}}
+{{#model}}
+{{#isEnum}}
+{{>enumOuterClass}}
+{{/isEnum}}
+{{^isEnum}}
+{{>pojo}}
+{{/isEnum}}
+{{/model}}
+{{/models}}

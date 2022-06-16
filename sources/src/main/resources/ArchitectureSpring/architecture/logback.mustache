@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <property scope="context" resource="application.yml" />
+    <!-- OPCIONAL! Si se elige que se guarden en ficheros -->
+    <!-- LOG_PATH y LOG_FILE se obtiene los valores de la propiedad logging del yml -->
+       <property name="LOG_PATH" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}" />
+    <property name="APP_NAME" value="${LOG_FILE}" />
+    <!-- Opcion por si se quiere coger el valor directamente de una propiedad del yml -->
+    <!-- <springProperty name="APP_NAME" source="spring.application.name"/>-->
+    <!-- Salida en consola -->
+    <appender name="stdoutAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [${APP_NAME:-},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-},%X{X-Span-Export:-}] [%thread] %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+     
+    <!-- Salida en fichero System.out filtrando a partir de nivel WARN -->
+    <appender name="stdoutWarnAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <encoder>
+            <pattern>${LOG_FILE} %d{HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+        <target>System.out</target>
+    </appender>
+ 
+     <!-- Salida en ficheros rotatorios y con limitación de tamano -->
+    <appender name="rollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${LOG_FILE}</file>
+        <rollingPolicy
+            class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${LOG_FILE}-%d{yyyy-MM-dd}-${PID}_%i.log
+            </fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>5</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_FILE} %d{HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>   
+    
+    {{#logback-fluentd}}
+    <appender name="FLUENT_TEXT"
+        class="ch.qos.logback.more.appenders.DataFluentAppender">
+        <tag>{{artifactId}}</tag>
+        <label>normal</label>
+        <remoteHost>127.0.0.1</remoteHost><!--Servidor o túnel-->
+        <port>24224</port>
+        <useEventTime>false</useEventTime>
+    </appender>    
+    {{/logback-fluentd}}
+    {{#architecture-multitenant-jpa}}
+        <appender name="MultitenantFileAppender"
+		class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<key>tenantId</key>
+			<defaultValue>noTenant</defaultValue>
+		</discriminator>
+		<sift>
+			<appender name="fileAppender"
+				class="ch.qos.logback.core.FileAppender">
+				<file>${LOGS}/${tenantId}.log</file>
+				<encoder>
+					<pattern>%d [%thread] %level %mdc %logger{50} - %msg%n</pattern>
+				</encoder>
+			</appender>			
+		</sift>
+	</appender>
+	
+	<appender name="MultitenantStdoutAppender"
+		class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<key>tenantId</key>
+			<defaultValue>noTenant</defaultValue>
+		</discriminator>
+		<sift>
+			<appender name="stdoutAppender" class="ch.qos.logback.core.ConsoleAppender">
+		        <encoder>
+		            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level)[${tenantId}] [${APP_NAME:-},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-},%X{X-Span-Export:-}] [%thread] %logger{50} - %msg%n</pattern>
+		        </encoder>
+		    </appender>
+		</sift>
+	</appender>
+	
+	 {{#logback-fluentd}}
+	 
+	 <appender name="MultitenantFluentdAppender"
+		class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<key>tenantId</key>
+			<defaultValue>noTenant</defaultValue>
+		</discriminator>
+		<sift>
+			<appender name="FLUENT_TEXT"
+		        class="ch.qos.logback.more.appenders.DataFluentAppender">
+		        <tag>{{artifactId}}-${tenantId}</tag>
+		        <label>normal</label>
+		        <remoteHost>127.0.0.1</remoteHost><!--Servidor o túnel-->
+		        <port>24224</port>
+		        <useEventTime>false</useEventTime>
+		    </appender> 
+		</sift>
+	</appender> 
+       
+    {{/logback-fluentd}}    
+    {{/architecture-multitenant-jpa}}
+       
+      
+     <!-- Perfiles para ejecutar dependiendo el entorno -->  
+     <springProfile name="dev,default,local">
+        <root level="INFO">
+            <appender-ref ref="stdoutAppender" />
+            {{#architecture-multitenant-jpa}}
+            <appender-ref ref="MultitenantFileAppender" />
+            <appender-ref ref="MultitenantStdoutAppender" />
+            {{/architecture-multitenant-jpa}}
+         </root>
+    </springProfile>
+    <springProfile name="production,docker">
+        <root level="INFO">
+            <appender-ref ref="stdoutWarnAppender" /> 
+            <appender-ref ref="rollingFileAppender" />            
+{{#logback-fluentd}}            <appender-ref ref="FLUENT_TEXT" />{{/logback-fluentd}}            
+        </root>
+    </springProfile>
+     
+</configuration>  

@@ -1,0 +1,12 @@
+
+package {{basePackage}}.eda.subscribers;
+
+import org.springframework.cloud.stream.annotation.Input;
+import org.springframework.messaging.SubscribableChannel;
+
+public interface ExampleInputBinding {
+	
+	@Input(value = "example")
+	SubscribableChannel channel();
+
+}

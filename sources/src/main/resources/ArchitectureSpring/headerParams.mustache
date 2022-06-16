@@ -1,0 +1,1 @@
+{{#isHeaderParam}}@Parameter(description = "{{{description}}}" {{#required}},required=true{{/required}}) @RequestHeader(value="{{baseName}}", required={{#required}}true{{/required}}{{^required}}false{{/required}}) {{>optionalDataType}} {{paramName}}{{/isHeaderParam}}

@@ -1,0 +1,94 @@
+
+package {{package}};
+
+{{#imports}}import {{import}};
+{{/imports}}
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.multipart.MultipartFile;
+import {{basePackage}}.services.{{classname}}Service;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+{{#useBeanValidation}}
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+{{/useBeanValidation}}
+import java.util.List;
+import java.util.Map;
+{{#jdk8-no-delegate}}
+import java.util.Optional;
+{{/jdk8-no-delegate}}
+{{^jdk8-no-delegate}}
+    {{#useOptional}}
+import java.util.Optional;
+    {{/useOptional}}
+{{/jdk8-no-delegate}}
+{{#async}}
+import java.util.concurrent.{{^jdk8}}Callable{{/jdk8}}{{#jdk8}}CompletableFuture{{/jdk8}};
+{{/async}}
+
+{{>generatedAnnotation}}
+{{#useBeanValidation}}
+@Validated
+{{/useBeanValidation}}
+@Tag(name = "{{{baseName}}}", description = "the {{{baseName}}} API")
+@RestController
+{{=<% %>=}}
+
+<%={{ }}=%>
+{{#operations}}
+public class {{classname}}RestController {
+
+    @Autowired
+    private {{classname}}Service service;
+
+{{#operation}}
+
+    {{#virtualService}}
+    @ApiVirtual
+    {{/virtualService}}
+    @Operation(summary = "{{{summary}}}", operationId = "{{{operationId}}}", description = "{{{notes}}}"{{#hasAuthMethods}}, security = {
+        {{#authMethods}}@SecurityRequirement(name = "{{name}}"{{#isOAuth}}, scopes = {
+            {{#scopes}}"{{scope}}"{{#hasMore}},
+            {{/hasMore}}{{/scopes}}
+            }{{/isOAuth}}){{#hasMore}},
+        {{/hasMore}}{{/authMethods}}
+    }{{/hasAuthMethods}}, tags={ {{#vendorExtensions.x-tags}}"{{tag}}",{{/vendorExtensions.x-tags}} })
+    @ApiResponses(value = { {{#responses}}
+        @ApiResponse(responseCode = "{{{code}}}", description = "{{{message}}}"){{#hasMore}},{{/hasMore}}{{/responses}} })
+    {{#implicitHeaders}}
+    @ApiImplicitParams({
+    {{#headerParams}}
+    {{>implicitHeader}}
+    {{/headerParams}}
+    })
+    {{/implicitHeaders}}
+    @RequestMapping(value = "{{{path}}}",{{#singleContentTypes}}{{#hasProduces}}
+        //produces = "{{{vendorExtensions.x-accepts}}}", {{/hasProduces}}{{#hasConsumes}}
+        consumes = "{{{vendorExtensions.x-contentType}}}",{{/hasConsumes}}{{/singleContentTypes}}{{^singleContentTypes}}{{#hasProduces}}
+        //produces = { {{#produces}}"{{{mediaType}}}"{{#hasMore}}, {{/hasMore}}{{/produces}} }, {{/hasProduces}}{{#hasConsumes}}
+        consumes = { {{#consumes}}"{{{mediaType}}}"{{#hasMore}}, {{/hasMore}}{{/consumes}} },{{/hasConsumes}}{{/singleContentTypes}}
+        method = RequestMethod.{{httpMethod}})
+    public {{#responseWrapper}}{{.}}<{{/responseWrapper}}{{>returnTypes}}{{#responseWrapper}}>{{/responseWrapper}} {{operationId}}({{#allParams}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{>cookieParams}}{{#hasMore}},{{/hasMore}}{{^hasMore}}{{#reactive}}, {{/reactive}}{{/hasMore}}{{/allParams}}{{#reactive}}ServerWebExchange exchange{{/reactive}}){{#unhandledException}} throws Exception{{/unhandledException}} {
+        {{#returnType}}return {{/returnType}}service.{{operationId}}({{#allParams}}{{>paramsCall}}{{#hasMore}},{{/hasMore}}{{/allParams}});
+    }
+
+{{/operation}}
+}
+{{/operations}}

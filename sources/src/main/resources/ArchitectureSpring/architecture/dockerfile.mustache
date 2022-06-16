@@ -1,0 +1,14 @@
+FROM production-registry.devops.onesait.com/architecture/architecture-base-openjdk-{{#java11}}11{{/java11}}{{#java16}}16{{/java16}}{{^java11}}{{^java16}}8{{/java16}}{{/java11}}:latest
+
+# Metadata
+LABEL module.maintainer="onesaitarchitecture@indra.es" \
+	  module.name="{{artifactId}}"	
+
+ADD *-exec.jar app.jar
+    
+EXPOSE {{serverPort}}
+
+ENV JAVA_OPTS="$JAVA_OPTS -Xms1G -Xmx3G" \
+    URL_OP="https://dev.***.onesait.com" 
+
+ENTRYPOINT sh -c "java $JAVA_OPTS -Dspring.application.json=$ONESAIT_PROPERTIES -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=docker -jar /app.jar" && 1

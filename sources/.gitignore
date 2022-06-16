@@ -1,0 +1,11 @@
+/target/
+.attach_pid*
+*.factorypath
+
+.project
+.classpath
+.settings
+
+/tmpLib/
+/tmpMod/
+/tmparchitecture/
