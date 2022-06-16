@@ -10,7 +10,6 @@
 	<packaging>jar</packaging>
 	<name>onesait-initializrv2</name>
 
-
     <repositories>
         <repository>
             <id>onesait-platform</id>
